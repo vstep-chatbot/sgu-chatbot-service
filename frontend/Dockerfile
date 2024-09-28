@@ -1,13 +1,15 @@
-FROM oven/bun:latest
+FROM oven/bun:latest AS build-stage
 
 WORKDIR /app
 
 COPY package.json ./
 COPY bun.lockb ./
-COPY src ./
 
 RUN bun install
 
+COPY . .
+
+RUN mv stack.env .env
 RUN bun run build
 
 # Stage 2: Serve the Vite app with nginx

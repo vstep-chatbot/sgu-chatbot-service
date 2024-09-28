@@ -19,6 +19,12 @@ declare module "@tanstack/react-router" {
 }
 
 const rootElement = document.getElementById("app")!;
+const rasaChatElement = document.getElementById("rasa-chat-widget")!;
+
+rasaChatElement.setAttribute(
+  "data-websocket-url",
+  import.meta.env.VITE_RASA_CHAT_URL
+);
 
 if (!rootElement.innerHTML) {
   const root = ReactDOM.createRoot(rootElement);
