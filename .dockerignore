@@ -4,7 +4,7 @@
 *.log*
 
 # Dist
-node_modules
+frontend/node_modules
 dist/
 .vinxi
 .output
@@ -15,4 +15,4 @@ dist/
 # IDE
 .vscode/*
 !.vscode/extensions.json
-.idea
+../.idea

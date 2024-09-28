@@ -3,7 +3,7 @@ services:
     image: sgu-chatbot-frontend
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: frontend/Dockerfile.frontend
     ports:
       - "3002:80"
     pull_policy: build
