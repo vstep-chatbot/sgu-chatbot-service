@@ -30,3 +30,7 @@ build/
 ### Excel files
 *.xlsx
 *.xls
+
+spring-boot-logger.log
+
+.$**

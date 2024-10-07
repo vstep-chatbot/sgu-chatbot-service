@@ -24,12 +24,19 @@
   },
   "dependencies": {
     "@eslint/js": "^9.11.1",
+    "@radix-ui/react-select": "^2.1.2",
+    "@radix-ui/react-slot": "^1.1.0",
     "@tanstack/react-router": "^1.58.7",
     "@tanstack/router-devtools": "^1.58.7",
     "@types/eslint__js": "^8.42.3",
+    "class-variance-authority": "^0.7.0",
+    "clsx": "^2.1.1",
     "eslint": "^9.11.1",
+    "lucide-react": "^0.447.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
+    "tailwind-merge": "^2.5.3",
+    "tailwindcss-animate": "^1.0.7",
     "typescript": "^5.6.2",
     "typescript-eslint": "^8.7.0"
   }
