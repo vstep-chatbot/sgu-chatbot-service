@@ -15,6 +15,9 @@ public class Utils {
                 camelCaseString.append(part.substring(0, 1).toUpperCase())
                         .append(part.substring(1).toLowerCase());
             }
+            if (camelCaseString.length() != value.length()) {
+                camelCaseString.append(" ");
+            }
         }
         return camelCaseString.toString();
     }

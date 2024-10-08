@@ -11,13 +11,19 @@
 // Import Routes
 
 import { Route as rootRoute } from './routes/__root'
-import { Route as AboutImport } from './routes/about'
+import {Route as ScoresImport} from './routes/scores'
+import {Route as ContestantsImport} from './routes/contestants'
 import { Route as IndexImport } from './routes/index'
 
 // Create/Update Routes
 
-const AboutRoute = AboutImport.update({
-  path: '/about',
+const ScoresRoute = ScoresImport.update({
+    path: '/scores',
+    getParentRoute: () => rootRoute,
+} as any)
+
+const ContestantsRoute = ContestantsImport.update({
+    path: '/contestants',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -37,11 +43,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexImport
       parentRoute: typeof rootRoute
     }
-    '/about': {
-      id: '/about'
-      path: '/about'
-      fullPath: '/about'
-      preLoaderRoute: typeof AboutImport
+      '/contestants': {
+          id: '/contestants'
+          path: '/contestants'
+          fullPath: '/contestants'
+          preLoaderRoute: typeof ContestantsImport
+          parentRoute: typeof rootRoute
+      }
+      '/scores': {
+          id: '/scores'
+          path: '/scores'
+          fullPath: '/scores'
+          preLoaderRoute: typeof ScoresImport
       parentRoute: typeof rootRoute
     }
   }
@@ -51,37 +64,42 @@ declare module '@tanstack/react-router' {
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/about': typeof AboutRoute
+    '/contestants': typeof ContestantsRoute
+    '/scores': typeof ScoresRoute
 }
 
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/about': typeof AboutRoute
+    '/contestants': typeof ContestantsRoute
+    '/scores': typeof ScoresRoute
 }
 
 export interface FileRoutesById {
   __root__: typeof rootRoute
   '/': typeof IndexRoute
-  '/about': typeof AboutRoute
+    '/contestants': typeof ContestantsRoute
+    '/scores': typeof ScoresRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/about'
+    fullPaths: '/' | '/contestants' | '/scores'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/about'
-  id: '__root__' | '/' | '/about'
+    to: '/' | '/contestants' | '/scores'
+    id: '__root__' | '/' | '/contestants' | '/scores'
   fileRoutesById: FileRoutesById
 }
 
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  AboutRoute: typeof AboutRoute
+    ContestantsRoute: typeof ContestantsRoute
+    ScoresRoute: typeof ScoresRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  AboutRoute: AboutRoute,
+    ContestantsRoute: ContestantsRoute,
+    ScoresRoute: ScoresRoute,
 }
 
 export const routeTree = rootRoute
@@ -97,14 +115,18 @@ export const routeTree = rootRoute
       "filePath": "__root.tsx",
       "children": [
         "/",
-        "/about"
+        "/contestants",
+        "/scores"
       ]
     },
     "/": {
       "filePath": "index.tsx"
     },
-    "/about": {
-      "filePath": "about.tsx"
+    "/contestants": {
+      "filePath": "contestants.tsx"
+    },
+    "/scores": {
+      "filePath": "scores.tsx"
     }
   }
 }

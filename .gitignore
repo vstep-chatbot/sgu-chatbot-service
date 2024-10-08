@@ -8,5 +8,10 @@
 .vscode/
 
 ### Environment ###
-.env.*
+.env.local
 stack.env
+
+### Java logs ###
+logs
+
+**.xlsx
