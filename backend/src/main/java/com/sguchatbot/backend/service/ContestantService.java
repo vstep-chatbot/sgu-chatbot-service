@@ -1,22 +1,21 @@
 package com.sguchatbot.backend.service;
 
-import com.sguchatbot.backend.dto.GetContestantsDto;
+import com.sguchatbot.backend.dto.GetRecordsDto;
 import com.sguchatbot.backend.entity.Contestant;
 import com.sguchatbot.backend.entity.Record;
 import com.sguchatbot.backend.repository.ContestantRepository;
 import lombok.extern.slf4j.Slf4j;
+import org.bson.Document;
 import org.dhatim.fastexcel.reader.Cell;
 import org.dhatim.fastexcel.reader.ReadableWorkbook;
 import org.dhatim.fastexcel.reader.Row;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
+import org.springframework.data.mongodb.core.aggregation.AggregationOperation;
 import org.springframework.data.mongodb.core.aggregation.AggregationResults;
-import org.springframework.data.mongodb.core.aggregation.Fields;
-import org.springframework.data.mongodb.core.aggregation.GroupOperation;
 import org.springframework.stereotype.Component;
 
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
@@ -24,12 +23,14 @@ import java.util.stream.Stream;
 
 @Component
 @Slf4j
-public class ContestantService {
+public class ContestantService implements Excel {
 
+    private static final String serviceName = "contestants";
     private final Utils utils;
 
     private final ContestantRepository contestantRepository;
     private final MongoTemplate mongoTemplate;
+
 
     @Autowired
     public ContestantService(Utils utils, ContestantRepository contestantRepository, MongoTemplate mongoTemplate) {
@@ -38,8 +39,12 @@ public class ContestantService {
         this.mongoTemplate = mongoTemplate;
     }
 
-    public List<Contestant> readExcel(InputStream file, String fileName) throws IOException {
-        List<Contestant> contestants = new LinkedList<>();
+    public String getServiceName() {
+        return serviceName;
+    }
+
+    public List<Record> readExcel(InputStream file, String fileName) throws IOException {
+        List<Record> contestants = new LinkedList<>();
 
         try (ReadableWorkbook wb = new ReadableWorkbook(file)) {
             wb.getSheets().forEach(sheet -> {
@@ -94,27 +99,31 @@ public class ContestantService {
         return contestants;
     }
 
-    public List<GetContestantsDto> getContestants() {
+    public List<GetRecordsDto> getContestants() {
         // Define the group operation
-        GroupOperation groupOperation = Aggregation.group("import_from") // Grouping by 'import_from' field
-                .count().as("count") // Counting the number of documents in each group
-                .push("$$ROOT").as("records"); // Pushing the entire document into 'records' array
+        AggregationOperation operation = Aggregation.stage(new Document("$group",
+                new Document("_id", "$import_from")
+                        .append("count",
+                                new Document("$sum", 1L))
+                        .append("records",
+                                new Document("$push",
+                                        new Document("id", "$$ROOT._id")
+                                                .append("data", "$$ROOT.data")))));
 
         // Build the aggregation pipeline
-        Aggregation aggregation = Aggregation.newAggregation(groupOperation);
+        Aggregation aggregation = Aggregation.newAggregation(operation);
 
         // Execute the aggregation
-        AggregationResults<GetContestantsDto> results = mongoTemplate.aggregate(
-                aggregation,
-                "vstep-information", // Replace with your actual collection name
-                GetContestantsDto.class
-        );
+        AggregationResults<GetRecordsDto> results = mongoTemplate.aggregate(
+                aggregation, "contestants", GetRecordsDto.class);
 
         // Return the mapped results
         return results.getMappedResults();
     }
 
-    public void saveContestants(List<Contestant> contestants) {
+    public void saveRecords(List<Record> records) {
+        List<Contestant> contestants = records.stream()
+                .map(record -> (Contestant) record).toList();
         contestantRepository.saveAll(contestants);
     }
 }

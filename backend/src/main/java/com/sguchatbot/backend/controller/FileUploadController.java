@@ -1,7 +1,7 @@
 package com.sguchatbot.backend.controller;
 
-import com.sguchatbot.backend.entity.Contestant;
-import com.sguchatbot.backend.service.ContestantService;
+import com.sguchatbot.backend.entity.Record;
+import com.sguchatbot.backend.service.Excel;
 import com.sguchatbot.backend.storage.StorageFileNotFoundException;
 import com.sguchatbot.backend.storage.StorageService;
 import lombok.extern.slf4j.Slf4j;
@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.mvc.method.annotation.MvcUriComponentsBuilder;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
 import java.util.List;
@@ -28,13 +27,13 @@ import java.util.stream.Collectors;
 @Slf4j
 public class FileUploadController {
 
+    private final List<Excel> mainServices;
     private final StorageService storageService;
-    private final ContestantService contestantService;
 
     @Autowired
-    public FileUploadController(StorageService storageService, ContestantService contestantService) {
+    public FileUploadController(StorageService storageService, Excel... services) {
+        this.mainServices = List.of(services);
         this.storageService = storageService;
-        this.contestantService = contestantService;
     }
 
     @GetMapping("/")
@@ -61,45 +60,44 @@ public class FileUploadController {
                 "attachment; filename=\"" + file.getFilename() + "\"").body(file);
     }
 
-    @PostMapping("/")
-    public String handleFileUpload(@RequestParam("file") MultipartFile file,
-                                   @RequestParam("record_type") String recordType,
-                                   RedirectAttributes redirectAttributes) {
+    @PostMapping("")
+    public ResponseEntity<String> handleFileUpload(@RequestParam("file") MultipartFile file,
+                                                   @RequestParam("record_type") String recordType) {
         log.info("Uploading file: " + file.getOriginalFilename());
         storageService.store(file);
-        log.info("File uploaded");
+        log.info("File stored to disk, starting to read content");
+
         try {
-            if (recordType.equals("contestants")) {
+            Excel service = getServive(recordType);
+            List<Record> records;
 
-                log.info("Reading contestants from excel");
-                List<Contestant> records;
-                records = contestantService.readExcel(file.getInputStream(), file.getOriginalFilename());
+            records = service.readExcel(file.getInputStream(), file.getOriginalFilename());
 
-                log.info("Saving " + records.size() + " contestants to database");
+            log.info("Saving " + records.size() + " " + recordType + "(s) to database");
 
-                contestantService.saveContestants(records);
+            service.saveRecords(records);
 
-            } else if (recordType.equals("scores")) {
-                log.info("Reading scores from excel");
-                // TODO: Implement score reading
-            } else {
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid record type, must be 'contestant' or 'scores'");
-            }
-
+        } catch (IllegalArgumentException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
 
         } catch (IOException e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Error while reading excel", e);
         }
 
-        redirectAttributes.addFlashAttribute("message",
-                "You successfully uploaded " + file.getOriginalFilename() + "!");
-
-        return "redirect:/";
+        return ResponseEntity.ok("Successfully uploaded " + file.getOriginalFilename());
     }
 
     @ExceptionHandler(StorageFileNotFoundException.class)
     public ResponseEntity<?> handleStorageFileNotFound(StorageFileNotFoundException exc) {
         return ResponseEntity.notFound().build();
+    }
+
+    private Excel getServive(String type) throws IllegalArgumentException {
+        for (Excel service : mainServices) {
+            if (type.equals(service.getServiceName()))
+                return service;
+        }
+        throw new IllegalArgumentException("No service found, except contestants or services");
     }
 
 }

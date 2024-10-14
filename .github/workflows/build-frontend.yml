@@ -14,5 +14,4 @@ jobs:
         uses: distributhor/workflow-webhook@v3.0.7
         with:
           webhook_url: ${{ secrets.FRONTEND_WEBHOOK_URL }}
-          verbose: true
           max_time: 180

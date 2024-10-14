@@ -9,12 +9,51 @@ import {
     DialogTrigger,
 } from "@/components/ui/dialog";
 import {Input} from "../ui/input";
+import httpClient from "@/services/httpClient";
+import {toast} from "@/hooks/use-toast";
+import {useQueryClient} from "@tanstack/react-query";
+import {FormEvent} from "react";
 
 type UploadFileDialogProps = {
     setOpen?: (open: boolean) => void;
+    type: "contestants" | "scores";
 };
 
-export default function UploadFileDialog({setOpen}: UploadFileDialogProps) {
+export default function UploadFileDialog({
+                                             setOpen,
+                                             type,
+                                         }: UploadFileDialogProps) {
+    const queryClient = useQueryClient();
+
+    const handleSubmit = (e: FormEvent) => {
+        e.preventDefault();
+        const form = e.currentTarget;
+        const formData = new FormData(form);
+
+        httpClient
+            .post(import.meta.env.VITE_BACKEND_SERVER + "/storage", formData)
+            .then(() => {
+                setOpen && setOpen(false);
+                toast({title: "Thêm file thành công"});
+                queryClient.invalidateQueries({queryKey: [type]});
+            })
+            .catch(function (error) {
+                if (error.response) {
+                    // The request was made and the server responded with a status code
+                    // that falls out of the range of 2xx
+                    console.error(error.response.data);
+                    console.log(error.response.status);
+                    console.log(error.response.headers);
+                    toast({
+                        title: "Thêm file thất bại",
+                        variant: "destructive",
+                        description: error.response.data?.message,
+                    });
+                }
+                setOpen && setOpen(false);
+            });
+    };
+
     return (
         <Dialog>
             <DialogTrigger asChild>
@@ -27,13 +66,7 @@ export default function UploadFileDialog({setOpen}: UploadFileDialogProps) {
                         Chọn file Excel chứa thông tin phòng thi để thêm vào hệ thống
                     </DialogDescription>
                 </DialogHeader>
-                <form
-                    target="_blank"
-                    method="POST"
-                    encType="multipart/form-data"
-                    id="upload-form"
-                    action={import.meta.env.VITE_BACKEND_SERVER + "/storage/"}
-                >
+                <form onSubmit={handleSubmit} id="upload-form">
                     <Input
                         required
                         type="file"
@@ -44,7 +77,7 @@ export default function UploadFileDialog({setOpen}: UploadFileDialogProps) {
                         className="hidden"
                         type="text"
                         name="record_type"
-                        value="contestants"
+                        value={type}
                     />
                 </form>
                 <DialogFooter>

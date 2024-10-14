@@ -1,17 +1,6 @@
-import {Button} from "@/components/ui/button";
 import {createFileRoute} from "@tanstack/react-router";
+import DataPage from "@/components/layouts/DataPage";
 
 export const Route = createFileRoute("/scores")({
-    component: ScoresComponent,
+    component: () => <DataPage recordType="scores" title="Danh sách File điểm"/>,
 });
-
-function ScoresComponent() {
-    return (
-        <div>
-            <div className="flex justify-between items-center">
-                <h3 className="text-2xl font-semibold">Danh sách điểm số</h3>
-                <Button>Thêm file</Button>
-            </div>
-        </div>
-    );
-}

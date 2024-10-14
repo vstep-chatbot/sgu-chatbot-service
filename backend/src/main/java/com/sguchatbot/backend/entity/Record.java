@@ -1,6 +1,5 @@
 package com.sguchatbot.backend.entity;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -8,13 +7,12 @@ import org.springframework.data.annotation.CreatedDate;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Map;
 
 @Data
 @Slf4j
 public class Record {
-    private static final String[] CITIZEN_ID_LABELS = {"Cmnd", "Cccd"};
+    private static final String[] CITIZEN_ID_LABELS = {"cmnd", "cccd"};
     public String id;
 
     private String import_from;
@@ -36,10 +34,11 @@ public class Record {
         this.import_date = LocalDateTime.now();
 
         for (String label : CITIZEN_ID_LABELS) {
-            if (data.containsKey(label)) {
-                this.citizen_id = data.get(label);
-                break;
-            }
+            data.forEach((key, value) -> {
+                if (key.toLowerCase().contains(label)) {
+                    this.citizen_id = value;
+                }
+            });
         }
 
         if (this.citizen_id == null) {

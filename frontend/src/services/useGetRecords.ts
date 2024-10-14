@@ -1,6 +1,6 @@
 import {useQuery, UseQueryOptions} from "@tanstack/react-query";
 import httpClient from "./httpClient";
-import {MyRecord} from "@/types/types";
+import {GetRecordsDto} from "@/types/types";
 
 type GetRecordsRequest = {
     recordType: "contestants" | "scores";
@@ -9,17 +9,18 @@ type GetRecordsRequest = {
 };
 
 async function getDocuments(request: GetRecordsRequest) {
-    const res = await httpClient.get<MyRecord[]>(request.recordType);
+    const res = await httpClient.get<GetRecordsDto[]>(request.recordType);
     return res.data;
 }
 
-export default function useGetDocuments(
+export default function useGetRecords(
     request: GetRecordsRequest,
-    opts?: Omit<UseQueryOptions<MyRecord[]>, "queryKey" | "queryFn">
+    opts?: Omit<UseQueryOptions<GetRecordsDto[]>, "queryKey" | "queryFn">,
 ) {
     return useQuery({
+        staleTime: 1000 * 60 * 15,
         ...opts,
-        queryKey: ["get", JSON.stringify(request)],
+        queryKey: ["get", request.recordType, request.page, request.limit],
         queryFn: () => getDocuments(request),
     });
 }

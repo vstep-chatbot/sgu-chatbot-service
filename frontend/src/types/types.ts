@@ -1,8 +1,4 @@
-import {
-    FileRoutesByFullPath,
-    FileRoutesById,
-    FileRouteTypes,
-} from "@/routeTree.gen";
+import {FileRouteTypes,} from "@/routeTree.gen";
 
 export interface IRoute {
     path: FileRouteTypes["fullPaths"];
@@ -16,16 +12,11 @@ export interface IRoute {
     invisible?: boolean;
 }
 
-type MyRecord = {
-    id: string;
-    import_from?: string;
-    type: string;
-    citizen_id?: string;
-    import_date?: string;
-    data?: Record<string, string>;
-};
-
-export type ContestantRecord = MyRecord & {
-    type: "contestant";
-    competition_date: string;
+export type GetRecordsDto = {
+    records: {
+        _id: string;
+        data: Record<string, string>;
+    }[];
+    count: number;
+    _id: string;
 };
