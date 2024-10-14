@@ -5,7 +5,7 @@ services:
       context: .
       dockerfile: frontend/Dockerfile.frontend
     ports:
-      - "3001:80"
+      - "5001:80"
     pull_policy: build
     env_file:
       - stack.env

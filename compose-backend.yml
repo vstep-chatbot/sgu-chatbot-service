@@ -2,7 +2,7 @@ services:
   backend:
     image: haina2410/sgu-chatbot-backend:latest
     ports:
-      - "3002:8080"
+      - "5002:8080"
     env_file:
       - stack.env
     restart: unless-stopped
