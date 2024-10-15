@@ -1,6 +1,7 @@
 services:
   backend:
     image: haina2410/sgu-chatbot-backend:latest
+    container_name: vstep-chatbot-backend
     ports:
       - "5002:8080"
     env_file:

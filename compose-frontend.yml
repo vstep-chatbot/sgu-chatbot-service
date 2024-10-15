@@ -1,9 +1,10 @@
 services:
   frontend:
-    image: sgu-chatbot-frontend
+    image: vstep-chatbot-frontend
     build:
       context: .
       dockerfile: frontend/Dockerfile.frontend
+    container_name: vstep-chatbot-frontend
     ports:
       - "5001:80"
     pull_policy: build
