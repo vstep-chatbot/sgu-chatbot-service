@@ -19,8 +19,8 @@ public class Contestant extends Record {
     @Field("competition_date")
     public LocalDate competitionDate;
 
-    public Contestant(String import_from, Map<String, String> data, LocalDateTime importTime) throws IOException {
-        super(import_from, "contestant", data, importTime);
+    public Contestant(String importFrom, Map<String, String> data, LocalDateTime importTime) throws IOException {
+        super(importFrom, "contestant", data, importTime);
 
         for (String label : DATE_LABELS) {
             if (data.containsKey(label)) {

@@ -109,7 +109,7 @@ public class ContestantService implements Excel {
                                 new Document("$sum", 1L))
                         .append("records",
                                 new Document("$push",
-                                        new Document("id", "$$ROOT._id")
+                                        new Document("_id", "$$ROOT._id")
                                                 .append("data", "$$ROOT.data")))));
 
         // Build the aggregation pipeline

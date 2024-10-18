@@ -173,12 +173,14 @@ public class ScoreService implements Excel {
         // Define the group operation
         AggregationOperation operation = Aggregation.stage(new Document("$group",
                 new Document("_id",
-                        new Document("import_from", "$import_from")
+                        new Document("filename", "$import_from")
                                 .append("competition_date", "$competition_date"))
                         .append("count",
                                 new Document("$sum", 1L))
                         .append("records",
-                                new Document("$push", "$$ROOT.data"))));
+                                new Document("$push",
+                                        new Document("_id", "$$ROOT._id")
+                                                .append("data", "$$ROOT.data")))));
 
         // Build the aggregation pipeline
         Aggregation aggregation = Aggregation.newAggregation(operation);

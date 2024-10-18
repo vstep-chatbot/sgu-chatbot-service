@@ -1,12 +1,17 @@
 package com.sguchatbot.backend.dto;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.List;
 
-public class GetScoresDto extends GetRecordsDto {
+public class GetScoresDto {
+
     public Id _id;
+    public int count;
+    public List<GetRecordsDto.RecordDto> records;
 
-    private static class Id {
-        public String import_from;
-        public LocalDate competition_date;
+    public static class Id {
+        public String filename;
+
+        public LocalDateTime competition_date;
     }
 }

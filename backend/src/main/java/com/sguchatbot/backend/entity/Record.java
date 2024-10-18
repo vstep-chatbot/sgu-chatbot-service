@@ -4,6 +4,8 @@ import lombok.Data;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.mongodb.core.mapping.Field;
+import org.springframework.data.mongodb.core.mapping.FieldType;
+import org.springframework.data.mongodb.core.mapping.MongoId;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -13,7 +15,9 @@ import java.util.Map;
 @Slf4j
 public class Record {
     private static final String[] CITIZEN_ID_LABELS = {"cmnd", "cccd"};
-    public String id;
+
+    @MongoId(FieldType.OBJECT_ID)
+    public String _id;
 
     @Field("import_from")
     private String importFrom;
@@ -52,7 +56,7 @@ public class Record {
     @Override
     public String toString() {
         return "Record{" +
-                "id='" + id + '\'' +
+                "id='" + _id + '\'' +
                 ", file_id='" + importFrom + '\'' +
                 ", type='" + type + '\'' +
                 ", citizen_id='" + citizenId + '\'' +
