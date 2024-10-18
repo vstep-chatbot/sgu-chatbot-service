@@ -13,10 +13,11 @@ import httpClient from "@/services/httpClient";
 import { toast } from "@/hooks/use-toast";
 import { useQueryClient } from "@tanstack/react-query";
 import { FormEvent } from "react";
+import { SERVICE_TYPE } from "@/types/types";
 
 type UploadFileDialogProps = {
   setOpen?: (open: boolean) => void;
-  type: "contestants" | "scores";
+  type: SERVICE_TYPE;
 };
 
 export default function UploadFileDialog({

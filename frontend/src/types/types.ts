@@ -1,5 +1,7 @@
 import { FileRouteTypes } from "@/routeTree.gen";
 
+export type SERVICE_TYPE = "contestants" | "scores";
+
 export interface IRoute {
   path: FileRouteTypes["fullPaths"];
   name: string;
@@ -12,12 +14,27 @@ export interface IRoute {
   invisible?: boolean;
 }
 
-export type GetRecordsDto = {
+// Data from a Contestant File
+export type GetContestantsDto = {
   records: {
     _id: string;
     data: Record<string, string>;
   }[];
   count: number;
-  competition_date: string;
-  _id: string;
+  filename: string;
+};
+
+// Data from a Score File
+export type GetScoresDto = {
+  _id: {
+    filename: string;
+    competition_date: string;
+  };
+
+  count: number;
+
+  records: {
+    _id: string;
+    data: Record<string, string>;
+  }[];
 };

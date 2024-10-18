@@ -1,18 +1,15 @@
 import { createFileRoute } from "@tanstack/react-router";
 import LoadingBlock from "@/components/atoms/LoadingBlock";
-import DocumentGroup, {
-  DocumentGroupBadge,
-} from "@/components/molecules/DocumentGroup";
+import RecordGroup from "@/components/molecules/RecordGroup";
 import UploadFileDialog from "@/components/molecules/UploadFileDialog";
 import useGetRecords from "@/services/useGetRecords";
-import { useMemo } from "react";
 
 export const Route = createFileRoute("/scores")({
   component: ScoresPage,
 });
 
 export default function ScoresPage() {
-  const { data: getRecordsDto, isLoading } = useGetRecords({
+  const { data: getRecordsDto, isLoading } = useGetRecords<"scores">({
     recordType: "scores",
   });
 
@@ -26,15 +23,16 @@ export default function ScoresPage() {
         <LoadingBlock />
       ) : (
         getRecordsDto?.map((file) => (
-          <DocumentGroup
-            key={file._id}
+          <RecordGroup
+            type="scores"
+            key={file._id.filename}
             documents={file.records}
-            filename={file._id}
+            filename={file._id.filename}
             badges={[
               {
                 label: "Ngày thi",
-                value: file.competition_date
-                  ? new Date(file.competition_date).toLocaleDateString(
+                value: file._id.filename
+                  ? new Date(file._id.competition_date).toLocaleDateString(
                       "en-GB",
                       {
                         dateStyle: "short",

@@ -1,26 +1,35 @@
-import {useQuery, UseQueryOptions} from "@tanstack/react-query";
+import { useQuery, UseQueryOptions } from "@tanstack/react-query";
 import httpClient from "./httpClient";
-import {GetRecordsDto} from "@/types/types";
+import { GetContestantsDto, GetScoresDto, SERVICE_TYPE } from "@/types/types";
 
 type GetRecordsRequest = {
-    recordType: "contestants" | "scores";
-    page?: number;
-    limit?: number;
+  recordType: SERVICE_TYPE;
+  page?: number;
+  limit?: number;
 };
 
 async function getDocuments(request: GetRecordsRequest) {
-    const res = await httpClient.get<GetRecordsDto[]>(request.recordType);
-    return res.data;
+  const res = await httpClient.get(request.recordType);
+  return res.data;
 }
 
-export default function useGetRecords(
-    request: GetRecordsRequest,
-    opts?: Omit<UseQueryOptions<GetRecordsDto[]>, "queryKey" | "queryFn">,
+export default function useGetRecords<T extends SERVICE_TYPE>(
+  request: GetRecordsRequest,
+  opts?: Omit<
+    UseQueryOptions<
+      (T extends "contestants"
+        ? GetContestantsDto
+        : T extends "scores"
+          ? GetScoresDto
+          : never)[]
+    >,
+    "queryKey" | "queryFn"
+  >
 ) {
-    return useQuery({
-        staleTime: 1000 * 60 * 15,
-        ...opts,
-        queryKey: ["get", request.recordType, request.page, request.limit],
-        queryFn: () => getDocuments(request),
-    });
+  return useQuery({
+    staleTime: 1000 * 60 * 15,
+    ...opts,
+    queryKey: ["get", request.recordType, request.page, request.limit],
+    queryFn: () => getDocuments(request),
+  });
 }
