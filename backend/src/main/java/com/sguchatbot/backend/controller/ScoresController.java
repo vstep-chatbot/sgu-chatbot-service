@@ -1,6 +1,6 @@
 package com.sguchatbot.backend.controller;
 
-import com.sguchatbot.backend.dto.GetRecordsDto;
+import com.sguchatbot.backend.dto.GetScoresDto;
 import com.sguchatbot.backend.service.ScoreService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -22,7 +22,7 @@ public class ScoresController {
     }
 
     @GetMapping("")
-    public ResponseEntity<List<GetRecordsDto>> getScores() {
+    public ResponseEntity<List<GetScoresDto>> getScores() {
         return ResponseEntity.ok(scoreService.getScores());
     }
 }

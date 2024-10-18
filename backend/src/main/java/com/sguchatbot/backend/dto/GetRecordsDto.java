@@ -13,4 +13,3 @@ public class GetRecordsDto {
 
     public List<Map<String, Object>> records;
 }
-

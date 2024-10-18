@@ -18,6 +18,7 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Stream;
 
@@ -45,6 +46,7 @@ public class ContestantService implements Excel {
 
     public List<Record> readExcel(InputStream file, String fileName) throws IOException {
         List<Record> contestants = new LinkedList<>();
+        LocalDateTime importTime = LocalDateTime.now();
 
         try (ReadableWorkbook wb = new ReadableWorkbook(file)) {
             wb.getSheets().forEach(sheet -> {
@@ -86,7 +88,7 @@ public class ContestantService implements Excel {
                             log.info("Sheet " + sheet.getName() + ": Empty row detected, skipping...");
                             break;
                         } else {
-                            Contestant contestant = new Contestant(fileName, row_data);
+                            Contestant contestant = new Contestant(fileName, row_data, importTime);
                             contestants.add(contestant);
                         }
                     }
@@ -125,5 +127,9 @@ public class ContestantService implements Excel {
         List<Contestant> contestants = records.stream()
                 .map(record -> (Contestant) record).toList();
         contestantRepository.saveAll(contestants);
+    }
+
+    public void deleteRecords(String filename) {
+        contestantRepository.deleteAllByImportFrom(filename);
     }
 }

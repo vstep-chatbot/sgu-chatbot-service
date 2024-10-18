@@ -1,7 +1,7 @@
 package com.sguchatbot.backend.service;
 
 import com.sguchatbot.backend.dto.DateHolder;
-import com.sguchatbot.backend.dto.GetRecordsDto;
+import com.sguchatbot.backend.dto.GetScoresDto;
 import com.sguchatbot.backend.entity.Record;
 import com.sguchatbot.backend.entity.Score;
 import com.sguchatbot.backend.repository.ScoreRepository;
@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Stream;
 
@@ -41,10 +42,22 @@ public class ScoreService implements Excel {
         return "scores";
     }
 
+    /**
+     * <h6>Kiểm tra xem một hàng có phải hàng <code>tiêu đề</code> không</h6>
+     * <p>Hàng <code>tiêu đề</code> là hàng có:</p>
+     * <ul>
+     *     <li>Ô đầu tiên không nằm ở cột đầu tiên</li>
+     *     <li>Tổng số ô trống >= 50% số ô</li>
+     * </ul>
+     *
+     * @param row The row to check
+     * @return Tiêu đề của hàng, <code>null</code>, hoặc <code>""</code>
+     */
     private String isTitleRow(Row row) {
         Optional<Cell> firstCell = row.getFirstNonEmptyCell();
 
-        if (firstCell.isEmpty()) {
+        // Empty row
+        if (firstCell.isEmpty() || firstCell.get().getRawValue() == null || firstCell.get().getRawValue().isEmpty()) {
             return "";
         }
 
@@ -53,22 +66,15 @@ public class ScoreService implements Excel {
             return firstCell.get().getRawValue();
 
         } else {
-            int valueCount = 0;
             int nullCount = 0;
             for (Cell cell : row) {
                 if (cell == null || cell.getRawValue() == null)
                     nullCount++;
-                else
-                    valueCount++;
             }
 
             // Is title
             if (nullCount >= (row.getPhysicalCellCount() / 2)) {
                 return firstCell.get().getRawValue();
-            }
-
-            if (valueCount == 0) {
-                return "";
             }
 
             return null;
@@ -77,8 +83,9 @@ public class ScoreService implements Excel {
 
     public List<Record> readExcel(InputStream file, String fileName) throws IOException {
         List<Record> scores = new LinkedList<>();
+        LocalDateTime importTime = LocalDateTime.now();
 
-        DateHolder competition_date = new DateHolder();
+        DateHolder competitionDate = new DateHolder();
 
         try (ReadableWorkbook wb = new ReadableWorkbook(file)) {
             wb.getSheets().forEach(sheet -> {
@@ -98,12 +105,17 @@ public class ScoreService implements Excel {
                         String title = isTitleRow(firstRow);
 
                         if (title != null) {
-                            log.info("[Sheet " + sheet.getName() + " - Row " + firstRow.getRowNum() + "]: Title detected: " + title);
-                            competition_date.value = utils.parseDateFromString(title);
+                            log.info("[Sheet " + sheet.getName() + " - Row " + firstRow.getRowNum() + "]: Title or empty row detected: " + title);
+                            if (competitionDate.value == null) competitionDate.value = utils.parseDateFromString(title);
                             firstRow = iter.next();
                             continue;
                         }
                         break;
+                    }
+
+                    if (competitionDate.value == null) {
+                        log.info("Sheet " + sheet.getName() + ": No date found, skipping...");
+                        throw new IOException("No date found in the sheet");
                     }
 
                     for (Cell cell : firstRow) {
@@ -118,7 +130,7 @@ public class ScoreService implements Excel {
 
                     while (iter.hasNext()) {
                         Row r = iter.next();
-                        Map<String, String> row_data = new HashMap<>();
+                        Map<String, String> rowData = new HashMap<>();
                         boolean allNull = true;
 
                         Iterator<Cell> row_iter = r.iterator();
@@ -131,9 +143,9 @@ public class ScoreService implements Excel {
 
                                 // If this label is empty,
                                 if (labelCell.getRawValue() == null || labelCell.getRawValue().isEmpty()) {
-                                    String prevCellValue = row_data.get(labels.get(labelCell.getColumnIndex() - 1));
-                                    row_data.put(labels.get(labelCell.getColumnIndex() - 1), prevCellValue + " " + cellValue);
-                                } else row_data.put(label, cellValue);
+                                    String prevCellValue = rowData.get(labels.get(labelCell.getColumnIndex() - 1));
+                                    rowData.put(labels.get(labelCell.getColumnIndex() - 1), prevCellValue + " " + cellValue);
+                                } else rowData.put(label, cellValue);
 
                                 if (cellValue != null) {
                                     allNull = false;
@@ -144,7 +156,7 @@ public class ScoreService implements Excel {
                             log.info("Sheet " + sheet.getName() + ": Empty row detected, skipping...");
                             break;
                         } else {
-                            Score score = new Score(fileName, row_data, competition_date.value);
+                            Score score = new Score(fileName, rowData, importTime, competitionDate.value);
                             scores.add(score);
                         }
                     }
@@ -157,23 +169,23 @@ public class ScoreService implements Excel {
         return scores;
     }
 
-    public List<GetRecordsDto> getScores() {
+    public List<GetScoresDto> getScores() {
         // Define the group operation
         AggregationOperation operation = Aggregation.stage(new Document("$group",
-                new Document("_id", "$import_from")
+                new Document("_id",
+                        new Document("import_from", "$import_from")
+                                .append("competition_date", "$competition_date"))
                         .append("count",
                                 new Document("$sum", 1L))
                         .append("records",
-                                new Document("$push",
-                                        new Document("id", "$$ROOT._id")
-                                                .append("data", "$$ROOT.data")))));
+                                new Document("$push", "$$ROOT.data"))));
 
         // Build the aggregation pipeline
         Aggregation aggregation = Aggregation.newAggregation(operation);
 
         // Execute the aggregation
-        AggregationResults<GetRecordsDto> results = mongoTemplate.aggregate(
-                aggregation, "scores", GetRecordsDto.class);
+        AggregationResults<GetScoresDto> results = mongoTemplate.aggregate(
+                aggregation, "scores", GetScoresDto.class);
 
         // Return the mapped results
         return results.getMappedResults();
@@ -184,4 +196,7 @@ public class ScoreService implements Excel {
         scoreRepository.saveAll(scores);
     }
 
+    public void deleteRecords(String filename) {
+        scoreRepository.deleteAllByImportFrom(filename);
+    }
 }

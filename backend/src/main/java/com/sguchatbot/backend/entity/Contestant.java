@@ -1,6 +1,7 @@
 package com.sguchatbot.backend.entity;
 
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.io.IOException;
 import java.time.LocalDate;
@@ -15,19 +16,20 @@ public class Contestant extends Record {
 
     private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
-    public LocalDate competition_date;
+    @Field("competition_date")
+    public LocalDate competitionDate;
 
-    public Contestant(String import_from, Map<String, String> data) throws IOException {
-        super(import_from, "contestant", data);
+    public Contestant(String import_from, Map<String, String> data, LocalDateTime importTime) throws IOException {
+        super(import_from, "contestant", data, importTime);
 
         for (String label : DATE_LABELS) {
             if (data.containsKey(label)) {
-                this.competition_date = LocalDate.parse(data.get(label), formatter);
+                this.competitionDate = LocalDate.parse(data.get(label), formatter);
                 break;
             }
         }
 
-        if (this.competition_date == null) {
+        if (this.competitionDate == null) {
             throw new IOException("No competition date found in data");
         }
     }

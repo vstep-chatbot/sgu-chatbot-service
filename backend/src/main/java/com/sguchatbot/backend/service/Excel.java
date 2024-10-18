@@ -12,4 +12,6 @@ public interface Excel {
     String getServiceName();
 
     void saveRecords(List<Record> records);
+
+    void deleteRecords(String filename);
 }
