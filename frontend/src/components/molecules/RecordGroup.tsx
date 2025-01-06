@@ -44,7 +44,7 @@ export default function RecordGroup({
     <Accordion type="single" collapsible>
       <AccordionItem value="item-1">
         <AccordionTrigger>
-          <div className="flex gap-5 w-full pr-4">
+          <div className="flex w-full gap-5 pr-4">
             <FileText size={24} />
             <p>{filename}</p>
             {badges?.map((badge, index) => (
@@ -65,7 +65,7 @@ export default function RecordGroup({
             </Badge>
           </div>
         </AccordionTrigger>
-        <AccordionContent className="flex gap-4 flex-wrap">
+        <AccordionContent className="flex flex-wrap gap-4">
           {documents.slice(0, length).map((document) => (
             <Record key={document._id} document={document} />
           ))}

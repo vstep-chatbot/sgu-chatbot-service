@@ -2,7 +2,6 @@ import LoadingBlock from "@/components/atoms/LoadingBlock";
 import RecordGroup from "@/components/molecules/RecordGroup";
 import UploadFileDialog from "@/components/molecules/UploadFileDialog";
 import useGetRecords from "@/services/useGetRecords";
-import { SERVICE_TYPE } from "@/types/types";
 import { createFileRoute } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/contestants")({
@@ -16,7 +15,7 @@ export default function DataPage() {
 
   return (
     <div>
-      <div className="flex justify-between items-center">
+      <div className="flex items-center justify-between">
         <h3 className="text-2xl font-semibold">Danh sách File thí sinh</h3>
         <UploadFileDialog type={"contestants"} />
       </div>

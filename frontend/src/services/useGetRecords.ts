@@ -24,7 +24,7 @@ export default function useGetRecords<T extends SERVICE_TYPE>(
           : never)[]
     >,
     "queryKey" | "queryFn"
-  >
+  >,
 ) {
   return useQuery({
     staleTime: 1000 * 60 * 15,

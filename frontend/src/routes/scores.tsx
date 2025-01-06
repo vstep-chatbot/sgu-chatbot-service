@@ -15,7 +15,7 @@ export default function ScoresPage() {
 
   return (
     <div>
-      <div className="flex justify-between items-center">
+      <div className="flex items-center justify-between">
         <h3 className="text-2xl font-semibold">Danh sách File điểm</h3>
         <UploadFileDialog type="scores" />
       </div>
@@ -36,7 +36,7 @@ export default function ScoresPage() {
                       "en-GB",
                       {
                         dateStyle: "short",
-                      }
+                      },
                     )
                   : "Chưa cập nhật",
               },

@@ -7,20 +7,34 @@
   "scripts": {
     "typecheck": "tsc --noEmit",
     "dev": "vite --port=3001",
-    "build": "vite build",
+    "build": "tsc -b && rimraf dist && vite build",
     "serve": "vite preview",
-    "start": "vite"
+    "start": "vite",
+    "format": "prettier ./src --write",
+    "format:check": "prettier ./src --check",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix"
   },
   "devDependencies": {
+    "@tanstack/eslint-plugin-query": "^5.62.15",
     "@tanstack/router-plugin": "^1.58.4",
+    "@types/node": "^22.10.5",
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",
     "@vitejs/plugin-react": "^4.3.1",
     "autoprefixer": "^10.4.20",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-react-hooks": "^5.1.0",
+    "eslint-plugin-react-refresh": "^0.4.16",
+    "eslint-plugin-simple-import-sort": "^12.1.1",
+    "eslint-plugin-tailwindcss": "^3.17.5",
     "postcss": "^8.4.47",
+    "prettier": "^3.4.2",
+    "prettier-plugin-tailwindcss": "^0.6.9",
+    "rimraf": "^6.0.1",
     "tailwindcss": "^3.4.13",
     "vite": "^5.4.4",
-    "vite-tsconfig-paths": "^5.0.1"
+    "vite-tsconfig-paths": "^5.1.4"
   },
   "dependencies": {
     "@eslint/js": "^9.11.1",
@@ -41,7 +55,7 @@
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
     "cmdk": "1.0.0",
-    "eslint": "^9.11.1",
+    "eslint": "^9.17.0",
     "lucide-react": "^0.447.0",
     "react": "^18.3.1",
     "react-custom-scrollbars-2": "^4.5.0",

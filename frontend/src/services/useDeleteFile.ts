@@ -23,7 +23,7 @@ async function deleteFile({ filename, type }: DeleteFileRequest) {
 }
 
 export default function useDeleteFile(
-  opts?: UseMutationOptions<unknown, AxiosError<any, any>, DeleteFileRequest>
+  opts?: UseMutationOptions<unknown, AxiosError<any, any>, DeleteFileRequest>,
 ) {
   const queryClient = useQueryClient();
 

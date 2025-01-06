@@ -1,10 +1,9 @@
-import React from "react";
 import ReactDOM from "react-dom/client";
 
-import {createRouter, RouterProvider} from "@tanstack/react-router";
+import { createRouter, RouterProvider } from "@tanstack/react-router";
 
-import {routeTree} from "./routeTree.gen";
-import {QueryClient, QueryClientProvider} from "@tanstack/react-query";
+import { routeTree } from "./routeTree.gen";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 // Set up a Router instance
 export const router = createRouter({
@@ -24,15 +23,15 @@ const rasaChatElement = document.getElementById("rasa-chat-widget")!;
 
 rasaChatElement.setAttribute(
   "data-websocket-url",
-    import.meta.env.VITE_RASA_CHAT_URL,
+  import.meta.env.VITE_RASA_CHAT_URL,
 );
 
 if (!rootElement.innerHTML) {
   const root = ReactDOM.createRoot(rootElement);
-    const queryClient = new QueryClient();
-    root.render(
-        <QueryClientProvider client={queryClient}>
-            <RouterProvider router={router}/>
-        </QueryClientProvider>,
-    );
+  const queryClient = new QueryClient();
+  root.render(
+    <QueryClientProvider client={queryClient}>
+      <RouterProvider router={router} />
+    </QueryClientProvider>,
+  );
 }

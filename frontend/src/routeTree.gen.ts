@@ -10,101 +10,101 @@
 
 // Import Routes
 
-import { Route as rootRoute } from './routes/__root'
-import {Route as ScoresImport} from './routes/scores'
-import {Route as ContestantsImport} from './routes/contestants'
-import { Route as IndexImport } from './routes/index'
+import { Route as rootRoute } from "./routes/__root";
+import { Route as ScoresImport } from "./routes/scores";
+import { Route as ContestantsImport } from "./routes/contestants";
+import { Route as IndexImport } from "./routes/index";
 
 // Create/Update Routes
 
 const ScoresRoute = ScoresImport.update({
-    path: '/scores',
-    getParentRoute: () => rootRoute,
-} as any)
+  path: "/scores",
+  getParentRoute: () => rootRoute,
+} as any);
 
 const ContestantsRoute = ContestantsImport.update({
-    path: '/contestants',
+  path: "/contestants",
   getParentRoute: () => rootRoute,
-} as any)
+} as any);
 
 const IndexRoute = IndexImport.update({
-  path: '/',
+  path: "/",
   getParentRoute: () => rootRoute,
-} as any)
+} as any);
 
 // Populate the FileRoutesByPath interface
 
-declare module '@tanstack/react-router' {
+declare module "@tanstack/react-router" {
   interface FileRoutesByPath {
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexImport
-      parentRoute: typeof rootRoute
-    }
-      '/contestants': {
-          id: '/contestants'
-          path: '/contestants'
-          fullPath: '/contestants'
-          preLoaderRoute: typeof ContestantsImport
-          parentRoute: typeof rootRoute
-      }
-      '/scores': {
-          id: '/scores'
-          path: '/scores'
-          fullPath: '/scores'
-          preLoaderRoute: typeof ScoresImport
-      parentRoute: typeof rootRoute
-    }
+    "/": {
+      id: "/";
+      path: "/";
+      fullPath: "/";
+      preLoaderRoute: typeof IndexImport;
+      parentRoute: typeof rootRoute;
+    };
+    "/contestants": {
+      id: "/contestants";
+      path: "/contestants";
+      fullPath: "/contestants";
+      preLoaderRoute: typeof ContestantsImport;
+      parentRoute: typeof rootRoute;
+    };
+    "/scores": {
+      id: "/scores";
+      path: "/scores";
+      fullPath: "/scores";
+      preLoaderRoute: typeof ScoresImport;
+      parentRoute: typeof rootRoute;
+    };
   }
 }
 
 // Create and export the route tree
 
 export interface FileRoutesByFullPath {
-  '/': typeof IndexRoute
-    '/contestants': typeof ContestantsRoute
-    '/scores': typeof ScoresRoute
+  "/": typeof IndexRoute;
+  "/contestants": typeof ContestantsRoute;
+  "/scores": typeof ScoresRoute;
 }
 
 export interface FileRoutesByTo {
-  '/': typeof IndexRoute
-    '/contestants': typeof ContestantsRoute
-    '/scores': typeof ScoresRoute
+  "/": typeof IndexRoute;
+  "/contestants": typeof ContestantsRoute;
+  "/scores": typeof ScoresRoute;
 }
 
 export interface FileRoutesById {
-  __root__: typeof rootRoute
-  '/': typeof IndexRoute
-    '/contestants': typeof ContestantsRoute
-    '/scores': typeof ScoresRoute
+  __root__: typeof rootRoute;
+  "/": typeof IndexRoute;
+  "/contestants": typeof ContestantsRoute;
+  "/scores": typeof ScoresRoute;
 }
 
 export interface FileRouteTypes {
-  fileRoutesByFullPath: FileRoutesByFullPath
-    fullPaths: '/' | '/contestants' | '/scores'
-  fileRoutesByTo: FileRoutesByTo
-    to: '/' | '/contestants' | '/scores'
-    id: '__root__' | '/' | '/contestants' | '/scores'
-  fileRoutesById: FileRoutesById
+  fileRoutesByFullPath: FileRoutesByFullPath;
+  fullPaths: "/" | "/contestants" | "/scores";
+  fileRoutesByTo: FileRoutesByTo;
+  to: "/" | "/contestants" | "/scores";
+  id: "__root__" | "/" | "/contestants" | "/scores";
+  fileRoutesById: FileRoutesById;
 }
 
 export interface RootRouteChildren {
-  IndexRoute: typeof IndexRoute
-    ContestantsRoute: typeof ContestantsRoute
-    ScoresRoute: typeof ScoresRoute
+  IndexRoute: typeof IndexRoute;
+  ContestantsRoute: typeof ContestantsRoute;
+  ScoresRoute: typeof ScoresRoute;
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-    ContestantsRoute: ContestantsRoute,
-    ScoresRoute: ScoresRoute,
-}
+  ContestantsRoute: ContestantsRoute,
+  ScoresRoute: ScoresRoute,
+};
 
 export const routeTree = rootRoute
   ._addFileChildren(rootRouteChildren)
-  ._addFileTypes<FileRouteTypes>()
+  ._addFileTypes<FileRouteTypes>();
 
 /* prettier-ignore-end */
 

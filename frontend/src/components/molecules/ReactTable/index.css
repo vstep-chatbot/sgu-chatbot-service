@@ -1,52 +1,52 @@
 .resizer {
-    @apply bg-transparent hover:bg-gray-700;
-    position: absolute;
-    top: 0;
-    height: 100%;
-    right: 0;
-    width: 5px;
-    cursor: col-resize;
-    user-select: none;
-    touch-action: none;
+  @apply bg-transparent hover:bg-gray-700;
+  position: absolute;
+  top: 0;
+  height: 100%;
+  right: 0;
+  width: 5px;
+  cursor: col-resize;
+  user-select: none;
+  touch-action: none;
 }
 
 .resizer.isResizing {
-    @apply bg-blue-500;
-    opacity: 1;
+  @apply bg-blue-500;
+  opacity: 1;
 }
 
 .react-table-container table {
-    @apply table-fixed border-collapse overflow-auto;
-    position: relative;
+  @apply table-fixed border-collapse overflow-auto;
+  position: relative;
 }
 
 .react-table-container thead {
-    position: sticky;
-    top: 0;
+  position: sticky;
+  top: 0;
 }
 
 .react-table-container table,
 .react-table-container th {
-    @apply border border-gray-300;
+  @apply border border-gray-300;
 }
 
 .react-table-container th {
-    @apply relative select-none font-bold text-gray-600;
-    font-size: 14px;
-    line-height: 20px;
+  @apply relative select-none font-bold text-gray-600;
+  font-size: 14px;
+  line-height: 20px;
 }
 
 .react-table-container tbody tr:hover {
-    @apply bg-gray-200;
+  @apply bg-gray-200;
 }
 
 .react-table-container th,
 .react-table-container td {
-    @apply overflow-hidden text-ellipsis whitespace-nowrap border-b border-t border-b-gray-300 border-t-gray-300;
+  @apply overflow-hidden text-ellipsis whitespace-nowrap border-b border-t border-b-gray-300 border-t-gray-300;
 }
 
 .react-table-container td {
-    @apply px-3 py-4 font-medium;
-    font-size: 14px;
-    line-height: 20px;
+  @apply px-3 py-4 font-medium;
+  font-size: 14px;
+  line-height: 20px;
 }
